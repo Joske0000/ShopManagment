@@ -14,13 +14,15 @@ namespace ShopManagment
         {
             Setup("chrome");
 
-            Metods Shop = new Metods(_driver);
+            Shops Shop = new Shops(_driver);
+            Partners Partner = new Partners(_driver);
+            Terminals Terminal = new Terminals(_driver);    
 
             var shopData = DataShopManagmentRepository.data[0];
 
             if (shopData.ShopName != null && shopData.City != null && shopData.Address != null && shopData.TerminalName != null && shopData.PartnerName != null)
             {
-                Shop.AddPartner(shopData.PartnerName);         
+                Partner.AddPartner(shopData.PartnerName);         
 
                 NetworkDisconnection();
 
@@ -28,19 +30,19 @@ namespace ShopManagment
 
                 Thread.Sleep(200);
 
-                //Shop.AddTerminal(shopData.ShopName, shopData.TerminalName);
+                //Terminal.AddTerminal(shopData.ShopName, shopData.TerminalName);
 
                 //Thread.Sleep(100);
 
-                Shop.SearchPartner(shopData.PartnerName);
+                Partner.SearchPartner(shopData.PartnerName);
 
-                Thread.Sleep(100);
+                //Thread.Sleep(100);
 
                 //Shop.SearchShop(shopData.ShopName);
 
                 //Thread.Sleep(100);
 
-                //Shop.SearchTerminal(shopData.TerminalName);
+                //Terminal.SearchTerminal(shopData.TerminalName);
             }
             else
             {
@@ -57,11 +59,11 @@ namespace ShopManagment
         {
             Setup("chrome");
 
-            Metods Shop = new Metods(_driver);        
+            Pagination pagination = new Pagination(_driver);
 
-            string? page1 = Shop.GetLastShopIdOnPage(0);   
+            string? page1 = pagination.GetLastShopIdOnPage(0);   
 
-            string? page2 = Shop.GetLastShopIdOnPage(2);
+            string? page2 = pagination.GetLastShopIdOnPage(2);
 
             if (page1 != page2)
             {
