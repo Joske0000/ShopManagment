@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ShopManagment.Data
+﻿namespace ShopManagment.Data
 {
     public class DataShopManagment
     {
@@ -12,6 +6,7 @@ namespace ShopManagment.Data
         public string? City { get; set; }
         public string? Address { get; set; }
         public string? TerminalName { get; set; }
+        public string? PartnerName { get; set; }
     }
     public static class DataShopManagmentRepository
     {
@@ -22,7 +17,8 @@ namespace ShopManagment.Data
                 ShopName = Faker.Name.FullName(),
                 City = Faker.Address.City(),
                 Address = Faker.Address.StreetAddress(),
-                TerminalName = Faker.Name.FullName()
+                TerminalName = Faker.Name.First(),
+                PartnerName = Faker.Company.Name()
             }
         };
     }
