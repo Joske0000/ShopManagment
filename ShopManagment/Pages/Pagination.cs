@@ -23,21 +23,22 @@ namespace ShopManagment.Pages
             _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
         }
 
-        public string? GetLastShopIdOnPage(int n)
+        public string? GetLastShopIdOnPage(int n, int Timeout)
         {
-            pagination(n);
+            pagination(n, Timeout);
             Logger.Info("Shop tab opened");
             IWebElement table = _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#shop-table > table > tbody")));
-            Thread.Sleep(1000);
+            Thread.Sleep(Timeout);
             Logger.Info("Table found");
             IList<IWebElement> tableRows = table.FindElements(By.TagName("tr"));
-            Thread.Sleep(1000);
+            Thread.Sleep(Timeout);
 
             if (tableRows.Count > 0)
             {
                 IWebElement lastRow = tableRows[tableRows.Count - 1];
-                string lastrowid = lastRow.GetDomAttribute("Id");
-                IWebElement specificRow = table.FindElement(By.Id(lastrowid));
+                Thread.Sleep(Timeout);
+                string lastrowid = lastRow.GetDomAttribute("Id");               
+                IWebElement specificRow = table.FindElement(By.Id(lastrowid));              
                 IList<IWebElement> tableDataCells = specificRow.FindElements(By.TagName("td"));
                 if (tableDataCells.Count > 0)
                 {
@@ -49,7 +50,7 @@ namespace ShopManagment.Pages
             }
             return null;
         }
-        public void pagination(int numberOfScrolls)
+        public void pagination(int numberOfScrolls, int Timeout)
         {
             _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/shop");
             By shopTableXPath = By.XPath("//*[@id='shop-table-1']");
@@ -61,7 +62,7 @@ namespace ShopManagment.Pages
             {
                 actions.SendKeys(Keys.PageDown).Perform();
                 Logger.Info($"PageDown {i} performed");
-                Thread.Sleep(1000);
+                Thread.Sleep(Timeout);
             }
         }
     }

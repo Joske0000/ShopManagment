@@ -23,7 +23,6 @@ namespace ShopManagment.Setup
                 LoggerSetup.ConfigureLogging();    
             }
         }
-
         private void InitializeNetworkAdapter()
         {
             if (_driver is IDevTools devTools)
@@ -35,15 +34,18 @@ namespace ShopManagment.Setup
             Logger.Info("Network adapter initialized.");
         }
 
+        public bool _isNetworkConditionSet = false;
+
         public void SlowNetworkConditions()
         {
             _networkAdapter?.EmulateNetworkConditions(new OpenQA.Selenium.DevTools.V131.Network.EmulateNetworkConditionsCommandSettings()
             {          
                 Offline = false,
                 Latency = 200,
-                DownloadThroughput = 500 * 1024 / 8,
-                UploadThroughput = 500 * 1024 / 8
+                DownloadThroughput = 256 * 1024 / 8,
+                UploadThroughput = 256 * 1024 / 8
             });
+            _isNetworkConditionSet = true;
             Logger.Info("Network conditions set to slow.");
         }
 
@@ -72,9 +74,7 @@ namespace ShopManagment.Setup
 
             Logger.Info("Network reconnected.");
         }
-
-        [TearDown]
-        public void TearDown()
+        public void Cleanup()
         {
             try
             {

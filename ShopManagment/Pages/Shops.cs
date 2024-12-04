@@ -26,7 +26,7 @@ namespace ShopManagment.Pages
         IWebElement submitShop => _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("button#shop-modal-buttons-save")));
        
        
-        public void AddShop(string ShopName, string City, string Address, string PartnerName)
+        public void AddShop(string ShopName, string City, string Address, string PartnerName, int Timeout)
         {
             _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/shop");
             Logger.Info("Shop tab opened");
@@ -34,26 +34,25 @@ namespace ShopManagment.Pages
             _driver.FindElement(By.XPath("//*[@id=\"shop-modal-form-name\"]/div/div/div/div/input")).SendKeys(ShopName);  
             _driver.FindElement(By.XPath("//*[@id=\"shop-modal-form-city\"]/div/div/div/div/input")).SendKeys(City);   
             _driver.FindElement(By.XPath("//*[@id=\"shop-modal-form-address\"]/div/div/div/div/input")).SendKeys(Address);
-            Thread.Sleep(100);
             dropdownSelectPartner.Click();    
-            Thread.Sleep(100);
+            Thread.Sleep(Timeout);
             PartnerinShop.SendKeys(PartnerName);
-            Thread.Sleep(100);
+            Thread.Sleep(Timeout);
             PartnerSelect.Click();
-            Thread.Sleep(100);
+            Thread.Sleep(Timeout);
             submitShop.Click();
-            Thread.Sleep(100);          
+            Thread.Sleep(Timeout);
         }    
 
-        public void SearchShop(string ShopName)
+        public void SearchShop(string ShopName, int Timeout)
         {
             _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/shop");
             Logger.Info("Shop tab opened");
-            Thread.Sleep(1000);
+            Thread.Sleep(Timeout);
             IWebElement search = _driver.FindElement(By.CssSelector("div#filters-shop-name input"));
-            Thread.Sleep(1000);
+            Thread.Sleep(Timeout);
             search.SendKeys(ShopName);
-            Thread.Sleep(1000);
+            Thread.Sleep(Timeout);
 
             IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));
             IList<IWebElement> tableRow = table.FindElements(By.TagName("tr"));
@@ -73,7 +72,45 @@ namespace ShopManagment.Pages
             {
                 Logger.Warn($"Shop: {ShopName} NOT FOUND");
             }
-        }      
-  
+        }
+        public void ShopDetails(string ShopName, int Timeout)
+        {
+            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/shop");
+            Logger.Info("Shop tab opened");
+            Thread.Sleep(Timeout);
+            IWebElement search = _driver.FindElement(By.CssSelector("div#filters-shop-name input"));
+            Thread.Sleep(Timeout);
+            search.SendKeys(ShopName);
+            Thread.Sleep(Timeout);
+
+            IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));
+            IList<IWebElement> tableRow = table.FindElements(By.TagName("tr"));
+            foreach (var row in tableRow)
+            {
+                string rowid = row.GetDomAttribute("Id");
+                if (!string.IsNullOrEmpty(rowid))
+                {
+                    IWebElement specificRow = table.FindElement(By.Id(rowid));
+                    IList<IWebElement> tableDataCells = specificRow.FindElements(By.TagName("td"));
+                    if (tableDataCells.Count > 0)
+                    {
+                        string ID = tableDataCells[1].Text;
+                        string Date = tableDataCells[7].Text;
+                        string City = tableDataCells[4].Text;
+                        string Address = tableDataCells[5].Text;
+                        string Name = tableDataCells[3].Text;
+                        string DisabledShop = tableDataCells[8].Text;
+                        if (DisabledShop == "-")
+                        {
+                            Logger.Info($"Shop: {Name} with ID: {ID}, addres: {Address},{City} created on: {Date} is enabled");
+                        }
+                        else
+                        {
+                            Logger.Info($"Shop: {Name} with ID: {ID}, addres: {Address},{City} created on: {Date} is DISABLED");
+                        }
+                    }
+                }
+            }
+        }
     }
 }
