@@ -21,20 +21,21 @@ namespace ShopManagment.Pages
 
         public void AddPartner(string PartnerName, int Timeout)
         {
-            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/partner");
-            Logger.Info("Partner tab opened");
+            Logger.Info("Adding Partner");
+            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/partner");         
             AddPartnerButton.Click();
             Thread.Sleep(Timeout);
             AddPartnerName.SendKeys(PartnerName);
             Thread.Sleep(Timeout);
             _driver.FindElement(By.XPath("//*[@id=\"partner-modal-buttons-save\"]")).Click();
+            Logger.Info("Partner Added");
             Thread.Sleep(Timeout);
         }
 
         public void SearchPartner(string PartnerName, int Timeout)
         {
-            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/partner");
-            Logger.Info("Partner tab opened");
+            Logger.Info("Searching for Partner");
+            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/partner");          
             Thread.Sleep(Timeout);
             IWebElement search = _driver.FindElement(By.CssSelector("div#filters-partner-name input"));
             Thread.Sleep(Timeout);
@@ -44,26 +45,26 @@ namespace ShopManagment.Pages
             IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));
             IList<IWebElement> tableRow = table.FindElements(By.TagName("tr"));
 
-            bool shopFound = false;
+            bool patnerFound = false;
 
             foreach (var row in tableRow)
             {
                 if (row.Text.Contains(PartnerName))
                 {
                     Logger.Info($"Partner: {PartnerName} FOUND");
-                    shopFound = true;
+                    patnerFound = true;
                     break;
                 }
             }
-            if (!shopFound)
+            if (!patnerFound)
             {
                 Logger.Warn($"Partner: {PartnerName} NOT FOUND");
             }
         }
         public void PartnerDetails(string PartnerName, int Timeout)
         {
-            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/partner");
-            Logger.Info("Partner tab opened");
+            Logger.Info("Getting Partner Details");
+            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/partner");        
             Thread.Sleep(Timeout);
             IWebElement search = _driver.FindElement(By.CssSelector("div#filters-partner-name input"));
             Thread.Sleep(Timeout);

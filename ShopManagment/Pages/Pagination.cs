@@ -25,18 +25,18 @@ namespace ShopManagment.Pages
 
         public string? GetLastShopIdOnPage(int n, int Timeout)
         {
-            pagination(n, Timeout);
-            Logger.Info("Shop tab opened");
+            pagination(n, Timeout);         
             IWebElement table = _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#shop-table > table > tbody")));
+            WaitForTableToLoad(_driver, "#shop-table > table > tbody", TimeSpan.FromMilliseconds(Timeout));
             Thread.Sleep(Timeout);
-            Logger.Info("Table found");
             IList<IWebElement> tableRows = table.FindElements(By.TagName("tr"));
-            Thread.Sleep(Timeout);
+            WaitForTableToLoad(_driver, "#shop-table > table > tbody", TimeSpan.FromMilliseconds(Timeout));
+            //Thread.Sleep(Timeout);
 
             if (tableRows.Count > 0)
             {
                 IWebElement lastRow = tableRows[tableRows.Count - 1];
-                Thread.Sleep(Timeout);
+                WaitForTableToLoad(_driver, "#shop-table > table > tbody", TimeSpan.FromMilliseconds(Timeout));
                 string lastrowid = lastRow.GetDomAttribute("Id");               
                 IWebElement specificRow = table.FindElement(By.Id(lastrowid));              
                 IList<IWebElement> tableDataCells = specificRow.FindElements(By.TagName("td"));
@@ -61,9 +61,30 @@ namespace ShopManagment.Pages
             for (int i = 0; i < numberOfScrolls; i++)
             {
                 actions.SendKeys(Keys.PageDown).Perform();
-                Logger.Info($"PageDown {i} performed");
-                Thread.Sleep(Timeout);
+                WaitForTableToLoad(_driver, "#shop-table > table > tbody", TimeSpan.FromMilliseconds(Timeout));
             }
+        }
+
+        static IWebElement WaitForTableToLoad(IWebDriver driver, string tableCssSelector, TimeSpan timeout)
+        {
+            WebDriverWait wait = new WebDriverWait(driver, timeout);
+
+            IWebElement table = wait.Until(ExpectedConditions.ElementExists(By.CssSelector(tableCssSelector)));
+
+            int previousRowCount = 0;
+            int currentRowCount = 0;
+
+            do
+            {
+                previousRowCount = currentRowCount;
+
+                Thread.Sleep(500);
+
+                currentRowCount = table.FindElements(By.TagName("tr")).Count;
+
+            } while (currentRowCount > previousRowCount);
+
+            return table;
         }
     }
 }

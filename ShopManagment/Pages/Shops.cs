@@ -18,36 +18,29 @@ namespace ShopManagment.Pages
             _driver = driver;
             _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
         }
-        
-        IWebElement addShop => _wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"filters-shop-add\"]/span/i")));
-        IWebElement dropdownSelectPartner => _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#shop-modal-form-partner-container div.relative.z-20.text-left.text-xs.h-4.min-w-\\5b 1px\\5d.cursor-pointer")));
-        IWebElement PartnerinShop => _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("input#shop-modal-form-partner-input-search")));
-        IWebElement PartnerSelect => _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#shop-modal-form-partner-container label > span")));
-        IWebElement submitShop => _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("button#shop-modal-buttons-save")));
+             
        
        
         public void AddShop(string ShopName, string City, string Address, string PartnerName, int Timeout)
         {
+            Logger.Info("Adding Shop");
             _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/shop");
-            Logger.Info("Shop tab opened");
-            addShop.Click(); 
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"filters-shop-add\"]/span/i"))).Click();
             _driver.FindElement(By.XPath("//*[@id=\"shop-modal-form-name\"]/div/div/div/div/input")).SendKeys(ShopName);  
             _driver.FindElement(By.XPath("//*[@id=\"shop-modal-form-city\"]/div/div/div/div/input")).SendKeys(City);   
-            _driver.FindElement(By.XPath("//*[@id=\"shop-modal-form-address\"]/div/div/div/div/input")).SendKeys(Address);
-            dropdownSelectPartner.Click();    
+            _driver.FindElement(By.XPath("//*[@id=\"shop-modal-form-address\"]/div/div/div/div/input")).SendKeys(Address);    
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#shop-modal-form-partner-container div.relative.z-20.text-left.text-xs.h-4.min-w-\\5b 1px\\5d.cursor-pointer"))).Click();
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("input#shop-modal-form-partner-input-search"))).SendKeys(PartnerName);
             Thread.Sleep(Timeout);
-            PartnerinShop.SendKeys(PartnerName);
-            Thread.Sleep(Timeout);
-            PartnerSelect.Click();
-            Thread.Sleep(Timeout);
-            submitShop.Click();
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#shop-modal-form-partner-container label > span"))).Click();
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("button#shop-modal-buttons-save"))).Click();
             Thread.Sleep(Timeout);
         }    
 
         public void SearchShop(string ShopName, int Timeout)
         {
+            Logger.Info("Searching for Shop");
             _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/shop");
-            Logger.Info("Shop tab opened");
             Thread.Sleep(Timeout);
             IWebElement search = _driver.FindElement(By.CssSelector("div#filters-shop-name input"));
             Thread.Sleep(Timeout);
@@ -75,11 +68,10 @@ namespace ShopManagment.Pages
         }
         public void ShopDetails(string ShopName, int Timeout)
         {
+            Logger.Info("Getting Shop Details");
             _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/shop");
-            Logger.Info("Shop tab opened");
             Thread.Sleep(Timeout);
-            IWebElement search = _driver.FindElement(By.CssSelector("div#filters-shop-name input"));
-            Thread.Sleep(Timeout);
+            IWebElement search= _wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("div#filters-shop-name input")));
             search.SendKeys(ShopName);
             Thread.Sleep(Timeout);
 
