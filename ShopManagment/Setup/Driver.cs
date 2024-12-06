@@ -16,7 +16,7 @@ namespace ShopManagment.Setup
             ConfigureLogging();
 
             if (browserName.Equals("chrome"))
-            {
+            {;
                 _driver = new ChromeDriver();
                 _driver.Manage().Window.Maximize();
                 InitializeNetworkAdapter();

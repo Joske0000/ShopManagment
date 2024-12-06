@@ -1,4 +1,5 @@
 using NLog;
+using OpenQA.Selenium.DevTools.V129.Database;
 using ShopManagment.Data;
 using ShopManagment.Pages;
 using ShopManagment.Setup;
@@ -9,7 +10,7 @@ namespace ShopManagment
     [TestFixture]
     public class Tests : SetupDriver
     {     
-        private List<DataShopManagment> _data;
+        private List<DataShopManagment> _data;     
         int Timeout;
         
         [OneTimeSetUp]
@@ -17,8 +18,9 @@ namespace ShopManagment
         {
             _data = DataShopManagmentRepository.data;
             Setup("chrome");
+          
             SlowNetworkConditions();
-            if (_isNetworkConditionSet=true)
+            if (_isNetworkConditionSet == true)
             {
                 Timeout = 1000;
             }

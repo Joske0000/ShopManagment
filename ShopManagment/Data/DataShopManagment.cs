@@ -14,10 +14,10 @@
         {
             new DataShopManagment
             {
-                ShopName = Faker.Name.FullName(),
+                ShopName = Faker.Name.First(),
                 City = Faker.Address.City(),
                 Address = Faker.Address.StreetAddress(),
-                TerminalName = Faker.Name.First(),
+                TerminalName = Faker.Name.Last(),
                 PartnerName = Faker.Company.Name()
             }
         };
