@@ -21,9 +21,9 @@ namespace ShopManagment.Pages
 
         public string? GetLastShopIdOnPage(int n, int Timeout)
         {
-            pagination(n, Timeout);         
-            IWebElement table = _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#shop-table > table > tbody")));
+            pagination(n, Timeout);                   
             WaitForTableToLoad(_driver, "#shop-table > table > tbody", TimeSpan.FromMilliseconds(Timeout));
+            IWebElement table = _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#shop-table > table > tbody")));
             IList<IWebElement> tableRows = table.FindElements(By.TagName("tr"));
 
             if (tableRows.Count > 0)
@@ -69,7 +69,7 @@ namespace ShopManagment.Pages
             {
                 previousRowCount = currentRowCount;
 
-                Thread.Sleep(500);
+                Thread.Sleep(timeout);
 
                 currentRowCount = table.FindElements(By.TagName("tr")).Count;
 

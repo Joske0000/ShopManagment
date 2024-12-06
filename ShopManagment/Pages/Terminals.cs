@@ -30,7 +30,7 @@ namespace ShopManagment.Pages
             Thread.Sleep(Timeout);
             _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#terminal-modal-form-shop-container > div.absolute.left-\\[-1px\\].w-\\[calc\\(100\\%\\+2px\\)\\].z-50.rounded-b-md.top-full.bg-white.border-r.border-b.border-l.border-t.text-left.overflow-y-auto.border-grey-200.max-h-24 > div > div.relative.flex.flex-col.justify-center.items-center.w-full > label > span"))).Click();
             _wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("button#shop-modal-buttons-save"))).Click();
-            Thread.Sleep(Timeout);
+            WaitForTableToLoad(_driver, "overflow-auto", TimeSpan.FromMilliseconds(Timeout));
             Logger.Info($"TERMINAL: {TerminalName} ADDED");
         }
         public void SearchTerminal(string TerminalName, int Timeout)
@@ -63,8 +63,8 @@ namespace ShopManagment.Pages
             Logger.Info("Getting Terminal Details");
             _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-terminal-name input"))).Clear();
             _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-terminal-name input"))).SendKeys(TerminalName);
+            WaitForTableToLoad(_driver, "overflow-auto", TimeSpan.FromMilliseconds(Timeout));
             IWebElement table = _wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("overflow-auto"))); 
-            Thread.Sleep(Timeout);
             IList<IWebElement> tableRow = table.FindElements(By.TagName("tr"));
             foreach (var row in tableRow)
             {
@@ -100,7 +100,7 @@ namespace ShopManagment.Pages
             _wait.Until(ExpectedConditions.ElementToBeClickable(By.Id("filters-terminal-shop-input-search"))).SendKeys(ShopName);
             Thread.Sleep(Timeout);
             _wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("//*[@id=\"filters-terminal-shop-container\"]/div[2]/div/div[2]/label/span"))).Click();
-            Thread.Sleep(Timeout * 3);
+            WaitForTableToLoad(_driver, "overflow-auto", TimeSpan.FromMilliseconds(Timeout));
 
             IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));
             IList<IWebElement> tableRow = table.FindElements(By.TagName("tr"));
@@ -144,7 +144,7 @@ namespace ShopManagment.Pages
              }
          }
 
-        static IWebElement WaitForTableToLoad(IWebDriver driver, string tableCssSelector, TimeSpan timeout)
+        public IWebElement WaitForTableToLoad(IWebDriver driver, string tableCssSelector, TimeSpan timeout)
         {
             WebDriverWait wait = new WebDriverWait(driver, timeout);
 
@@ -157,7 +157,7 @@ namespace ShopManagment.Pages
             {
                 previousRowCount = currentRowCount;
 
-                Thread.Sleep(500);
+                Thread.Sleep(timeout);
 
                 currentRowCount = table.FindElements(By.TagName("tr")).Count;
 

@@ -33,15 +33,14 @@ namespace ShopManagment.Pages
             Thread.Sleep(Timeout);
             _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#shop-modal-form-partner-container label > span"))).Click();
             _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("button#shop-modal-buttons-save"))).Click();
-            Thread.Sleep(Timeout);
-        }    
+            WaitForTableToLoad(_driver, "overflow-auto", TimeSpan.FromMilliseconds(Timeout));
+        }
 
         public void SearchShop(string ShopName, int Timeout)
         {
             Logger.Info("Searching for Shop");          
             _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-shop-name input"))).SendKeys(ShopName);
-            Thread.Sleep(Timeout);
-
+            WaitForTableToLoad(_driver, "overflow-auto", TimeSpan.FromMilliseconds(Timeout));
             IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));
             IList<IWebElement> tableRow = table.FindElements(By.TagName("tr"));
 
@@ -66,7 +65,7 @@ namespace ShopManagment.Pages
         {
             Logger.Info("Getting Shop Details");
             _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-shop-name input"))).SendKeys(ShopName);
-            Thread.Sleep(Timeout);
+            WaitForTableToLoad(_driver, "overflow-auto", TimeSpan.FromMilliseconds(Timeout));
 
             IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));
             IList<IWebElement> tableRow = table.FindElements(By.TagName("tr"));
@@ -100,6 +99,27 @@ namespace ShopManagment.Pages
                     }
                 }
             }
+        }
+        static IWebElement WaitForTableToLoad(IWebDriver driver, string tableCssSelector, TimeSpan timeout)
+        {
+            WebDriverWait wait = new WebDriverWait(driver, timeout);
+
+            IWebElement table = wait.Until(ExpectedConditions.ElementExists(By.ClassName(tableCssSelector)));
+
+            int previousRowCount = 0;
+            int currentRowCount = 0;
+
+            do
+            {
+                previousRowCount = currentRowCount;
+
+                Thread.Sleep(timeout);
+
+                currentRowCount = table.FindElements(By.TagName("tr")).Count;
+
+            } while (currentRowCount > previousRowCount);
+
+            return table;
         }
     }
 }

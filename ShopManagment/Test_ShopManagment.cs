@@ -1,5 +1,4 @@
 using NLog;
-using OpenQA.Selenium.DevTools.V129.Database;
 using ShopManagment.Data;
 using ShopManagment.Pages;
 using ShopManagment.Setup;
@@ -11,23 +10,14 @@ namespace ShopManagment
     public class Tests : SetupDriver
     {     
         private List<DataShopManagment> _data;     
-        int Timeout;
+       
         
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             _data = DataShopManagmentRepository.data;
-            Setup("chrome");
-          
-            SlowNetworkConditions();
-            if (_isNetworkConditionSet == true)
-            {
-                Timeout = 1000;
-            }
-            else
-            {
-                Timeout = 500;
-            }
+            Setup("chrome");              
+        
         }
 
         [OneTimeTearDown]
@@ -41,9 +31,9 @@ namespace ShopManagment
         {
             Pagination pagination = new Pagination(_driver);
 
-            string? page1 = pagination.GetLastShopIdOnPage(0, Timeout*2);
+            string? page1 = pagination.GetLastShopIdOnPage(0, Timeout);
 
-            string? page2 = pagination.GetLastShopIdOnPage(3, Timeout*2);
+            string? page2 = pagination.GetLastShopIdOnPage(3, Timeout);
 
             if (page1 != page2)
             {
@@ -107,7 +97,7 @@ namespace ShopManagment
             if (Data.ShopName != null && Data.TerminalName != null)
             {
 
-                Terminal.AddTerminal(Data.ShopName, Data.TerminalName, Timeout*2);
+                Terminal.AddTerminal(Data.ShopName, Data.TerminalName, Timeout);
                 Terminal.TerminalDetails(Data.TerminalName, Timeout);
             }
             else
@@ -127,7 +117,7 @@ namespace ShopManagment
 
             Terminals Terminal = new Terminals(_driver);
 
-            Terminal.EnrollTerminal(Data.ShopName, Data.TerminalName, Timeout*2);
+            Terminal.EnrollTerminal(Data.ShopName, Data.TerminalName, Timeout);
 
             string EnrollCode = clipboard.GetText();
 

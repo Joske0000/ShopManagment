@@ -2,6 +2,8 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.DevTools;
+using OpenQA.Selenium.Support.UI;
+using SeleniumExtras.WaitHelpers;
 
 namespace ShopManagment.Setup
 {
@@ -10,6 +12,8 @@ namespace ShopManagment.Setup
         public IWebDriver? _driver;
         private OpenQA.Selenium.DevTools.V131.Network.NetworkAdapter? _networkAdapter;
         public Logger Logger = LogManager.GetCurrentClassLogger();
+        public int Timeout { get; set; }    
+        public bool _isNetworkConditionSet = false; 
 
         public void Setup(string browserName)
         {
@@ -20,9 +24,40 @@ namespace ShopManagment.Setup
                 _driver = new ChromeDriver();
                 _driver.Manage().Window.Maximize();
                 InitializeNetworkAdapter();
-                LoggerSetup.ConfigureLogging();    
+                //SlowNetworkConditions();
+                LoggerSetup.ConfigureLogging();           
+                if (_isNetworkConditionSet == false)
+                {
+                    Timeout = 1000;
+                }
+                else
+                {
+                    Timeout = 3000;
+                }
             }
         }
+        public IWebElement WaitForTableToLoad(IWebDriver driver, string tableCssSelector, TimeSpan timeout)
+        {
+            WebDriverWait wait = new WebDriverWait(driver, timeout);
+
+            IWebElement table = wait.Until(ExpectedConditions.ElementExists(By.ClassName(tableCssSelector)));
+
+            int previousRowCount = 0;
+            int currentRowCount = 0;
+
+            do
+            {
+                previousRowCount = currentRowCount;
+
+                Thread.Sleep(500);
+
+                currentRowCount = table.FindElements(By.TagName("tr")).Count;
+
+            } while (currentRowCount > previousRowCount);
+
+            return table;
+        }
+
         private void InitializeNetworkAdapter()
         {
             if (_driver is IDevTools devTools)
@@ -33,9 +68,7 @@ namespace ShopManagment.Setup
             }
             Logger.Info("Network adapter initialized.");
         }
-
-        public bool _isNetworkConditionSet = false;
-
+     
         public void SlowNetworkConditions()
         {
             _networkAdapter?.EmulateNetworkConditions(new OpenQA.Selenium.DevTools.V131.Network.EmulateNetworkConditionsCommandSettings()
