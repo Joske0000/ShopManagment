@@ -1,12 +1,7 @@
 ﻿using NLog;
-using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 
 namespace ShopManagment.Pages
@@ -21,6 +16,7 @@ namespace ShopManagment.Pages
         {
             _driver = driver;
             _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
+            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/shop");
         }
 
         public string? GetLastShopIdOnPage(int n, int Timeout)
@@ -28,15 +24,11 @@ namespace ShopManagment.Pages
             pagination(n, Timeout);         
             IWebElement table = _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("#shop-table > table > tbody")));
             WaitForTableToLoad(_driver, "#shop-table > table > tbody", TimeSpan.FromMilliseconds(Timeout));
-            Thread.Sleep(Timeout);
             IList<IWebElement> tableRows = table.FindElements(By.TagName("tr"));
-            WaitForTableToLoad(_driver, "#shop-table > table > tbody", TimeSpan.FromMilliseconds(Timeout));
-            //Thread.Sleep(Timeout);
 
             if (tableRows.Count > 0)
             {
                 IWebElement lastRow = tableRows[tableRows.Count - 1];
-                WaitForTableToLoad(_driver, "#shop-table > table > tbody", TimeSpan.FromMilliseconds(Timeout));
                 string lastrowid = lastRow.GetDomAttribute("Id");               
                 IWebElement specificRow = table.FindElement(By.Id(lastrowid));              
                 IList<IWebElement> tableDataCells = specificRow.FindElements(By.TagName("td"));
@@ -51,8 +43,7 @@ namespace ShopManagment.Pages
             return null;
         }
         public void pagination(int numberOfScrolls, int Timeout)
-        {
-            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/shop");
+        {          
             By shopTableXPath = By.XPath("//*[@id='shop-table-1']");
             IWebElement shopTableElement = _wait.Until(ExpectedConditions.ElementToBeClickable(shopTableXPath));
             shopTableElement.Click();

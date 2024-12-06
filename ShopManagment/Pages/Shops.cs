@@ -1,6 +1,5 @@
 ﻿using NLog;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 
@@ -17,14 +16,14 @@ namespace ShopManagment.Pages
         {
             _driver = driver;
             _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
+            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/shop");
         }
              
        
        
         public void AddShop(string ShopName, string City, string Address, string PartnerName, int Timeout)
         {
-            Logger.Info("Adding Shop");
-            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/shop");
+            Logger.Info("Adding Shop");         
             _wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"filters-shop-add\"]/span/i"))).Click();
             _driver.FindElement(By.XPath("//*[@id=\"shop-modal-form-name\"]/div/div/div/div/input")).SendKeys(ShopName);  
             _driver.FindElement(By.XPath("//*[@id=\"shop-modal-form-city\"]/div/div/div/div/input")).SendKeys(City);   
@@ -39,12 +38,8 @@ namespace ShopManagment.Pages
 
         public void SearchShop(string ShopName, int Timeout)
         {
-            Logger.Info("Searching for Shop");
-            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/shop");
-            Thread.Sleep(Timeout);
-            IWebElement search = _driver.FindElement(By.CssSelector("div#filters-shop-name input"));
-            Thread.Sleep(Timeout);
-            search.SendKeys(ShopName);
+            Logger.Info("Searching for Shop");          
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-shop-name input"))).SendKeys(ShopName);
             Thread.Sleep(Timeout);
 
             IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));
@@ -58,6 +53,7 @@ namespace ShopManagment.Pages
                 {
                     Logger.Info($"Shop: {ShopName} FOUND");
                     shopFound = true;
+                    _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-shop-name input"))).Clear();
                     break;
                 }
             }
@@ -69,10 +65,7 @@ namespace ShopManagment.Pages
         public void ShopDetails(string ShopName, int Timeout)
         {
             Logger.Info("Getting Shop Details");
-            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/shop");
-            Thread.Sleep(Timeout);
-            IWebElement search= _wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("div#filters-shop-name input")));
-            search.SendKeys(ShopName);
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-shop-name input"))).SendKeys(ShopName);
             Thread.Sleep(Timeout);
 
             IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));
@@ -95,10 +88,14 @@ namespace ShopManagment.Pages
                         if (DisabledShop == "-")
                         {
                             Logger.Info($"Shop: {Name} with ID: {ID}, addres: {Address},{City} created on: {Date} is enabled");
+                            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-shop-name input"))).Clear();
+
                         }
                         else
                         {
                             Logger.Info($"Shop: {Name} with ID: {ID}, addres: {Address},{City} created on: {Date} is DISABLED");
+                            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-shop-name input"))).Clear();
+
                         }
                     }
                 }

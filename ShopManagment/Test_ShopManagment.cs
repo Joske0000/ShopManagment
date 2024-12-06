@@ -17,7 +17,7 @@ namespace ShopManagment
         {
             _data = DataShopManagmentRepository.data;
             Setup("chrome");
-            //SlowNetworkConditions();
+            SlowNetworkConditions();
             if (_isNetworkConditionSet=true)
             {
                 Timeout = 1000;
@@ -64,10 +64,7 @@ namespace ShopManagment
             if (Data.PartnerName != null)
             {
               
-                Partner.AddPartner(Data.PartnerName, Timeout);
-
-                Partner.SearchPartner(Data.PartnerName, Timeout);  
-                
+                Partner.AddPartner(Data.PartnerName, Timeout);                            
                 Partner.PartnerDetails(Data.PartnerName, Timeout); 
             }
             else
@@ -89,7 +86,6 @@ namespace ShopManagment
             {
 
                 Shop.AddShop(Data.ShopName, Data.City, Data.Address, Data.PartnerName, Timeout);           
-                Shop.SearchShop(Data.ShopName, Timeout);
                 Shop.ShopDetails(Data.ShopName, Timeout);
             }
             else
@@ -110,7 +106,6 @@ namespace ShopManagment
             {
 
                 Terminal.AddTerminal(Data.ShopName, Data.TerminalName, Timeout*2);
-                Terminal.SearchTerminal(Data.TerminalName, Timeout);
                 Terminal.TerminalDetails(Data.TerminalName, Timeout);
             }
             else

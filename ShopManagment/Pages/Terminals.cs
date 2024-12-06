@@ -16,12 +16,12 @@ namespace ShopManagment.Pages
         {
             _driver = driver;
             _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
+            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/terminal");
         }
 
         public void AddTerminal(string ShopName, string TerminalName, int Timeout)
         {
-            
-            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/terminal");
+                    
             Logger.Info("Terminal tab opened");   
             _wait.Until(ExpectedConditions.ElementToBeClickable(By.Id("filters-terminal-add"))).Click();
             _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#terminal-modal-form-name input"))).SendKeys(TerminalName);
@@ -35,11 +35,9 @@ namespace ShopManagment.Pages
         }
         public void SearchTerminal(string TerminalName, int Timeout)
         {
-            Logger.Info("Searching for Terminal");
-            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/terminal");   
-            Thread.Sleep(Timeout);
-            IWebElement search = _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-terminal-name input")));         
-            search.SendKeys(TerminalName);
+            Logger.Info("Searching for Terminal");  
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-terminal-name input"))).Clear();
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-terminal-name input"))).SendKeys(TerminalName);
             WaitForTableToLoad(_driver, "overflow-auto", TimeSpan.FromMilliseconds(Timeout));                
             IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));
             IList<IWebElement> tableRow = table.FindElements(By.TagName("tr"));
@@ -63,10 +61,8 @@ namespace ShopManagment.Pages
         public void TerminalDetails(string TerminalName, int Timeout)
         {
             Logger.Info("Getting Terminal Details");
-            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/terminal"); 
-            IWebElement search = _wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("div#filters-terminal-name input")));           
-            search.SendKeys(TerminalName);
-            Thread.Sleep(Timeout);
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-terminal-name input"))).Clear();
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-terminal-name input"))).SendKeys(TerminalName);
             IWebElement table = _wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("overflow-auto"))); 
             Thread.Sleep(Timeout);
             IList<IWebElement> tableRow = table.FindElements(By.TagName("tr"));
@@ -99,17 +95,11 @@ namespace ShopManagment.Pages
         public void EnrollTerminal(string ShopName, string TerminalName, int Timeout)
         {
             Logger.Info("Enrolling Terminal");
-            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/terminal");
-            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-terminal-name input")));
-            IWebElement search = _driver.FindElement(By.CssSelector("div#filters-terminal-name input"));
-            search.SendKeys(TerminalName);         
-            _wait.Until(ExpectedConditions.ElementToBeClickable(By.Id("filters-terminal-shop-container")));
-            _driver.FindElement(By.Id("filters-terminal-shop-container")).Click();
-            _wait.Until(ExpectedConditions.ElementToBeClickable(By.Id("filters-terminal-shop-input-search")));
-            _driver.FindElement(By.Id("filters-terminal-shop-input-search")).SendKeys(ShopName); 
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-terminal-name input"))).SendKeys(TerminalName);               
+            _wait.Until(ExpectedConditions.ElementToBeClickable(By.Id("filters-terminal-shop-container"))).Click();
+            _wait.Until(ExpectedConditions.ElementToBeClickable(By.Id("filters-terminal-shop-input-search"))).SendKeys(ShopName);
             Thread.Sleep(Timeout);
-            _wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("//*[@id=\"filters-terminal-shop-container\"]/div[2]/div/div[2]/label/span")));
-            _driver.FindElement(By.XPath("//*[@id=\"filters-terminal-shop-container\"]/div[2]/div/div[2]/label/span")).Click();
+            _wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("//*[@id=\"filters-terminal-shop-container\"]/div[2]/div/div[2]/label/span"))).Click();
             Thread.Sleep(Timeout * 3);
 
             IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));

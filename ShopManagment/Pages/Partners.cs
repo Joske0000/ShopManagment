@@ -1,6 +1,7 @@
 ﻿using NLog;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using SeleniumExtras.WaitHelpers;
 
 namespace ShopManagment.Pages
 {
@@ -15,31 +16,23 @@ namespace ShopManagment.Pages
         {
             _driver = driver;
             _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
+            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/partner");
         }
-        IWebElement AddPartnerButton => _driver.FindElement(By.Id("filters-partner-add"));
-        IWebElement AddPartnerName => _driver.FindElement(By.XPath("//*[@id=\"partner-modal-form-name\"]/div/div/div/div/input"));
-
+       
         public void AddPartner(string PartnerName, int Timeout)
         {
             Logger.Info("Adding Partner");
-            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/partner");         
-            AddPartnerButton.Click();
-            Thread.Sleep(Timeout);
-            AddPartnerName.SendKeys(PartnerName);
-            Thread.Sleep(Timeout);
-            _driver.FindElement(By.XPath("//*[@id=\"partner-modal-buttons-save\"]")).Click();
-            Logger.Info("Partner Added");
-            Thread.Sleep(Timeout);
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.Id("filters-partner-add"))).Click();       
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"partner-modal-form-name\"]/div/div/div/div/input"))).SendKeys(PartnerName);
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"partner-modal-buttons-save\"]"))).Click();      
+            Logger.Info($"Partner Added: {PartnerName}");
+            Thread.Sleep(Timeout*2);
         }
 
         public void SearchPartner(string PartnerName, int Timeout)
         {
             Logger.Info("Searching for Partner");
-            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/partner");          
-            Thread.Sleep(Timeout);
-            IWebElement search = _driver.FindElement(By.CssSelector("div#filters-partner-name input"));
-            Thread.Sleep(Timeout);
-            search.SendKeys(PartnerName);
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-partner-name input"))).SendKeys(PartnerName);            
             Thread.Sleep(Timeout);
 
             IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));
@@ -53,6 +46,7 @@ namespace ShopManagment.Pages
                 {
                     Logger.Info($"Partner: {PartnerName} FOUND");
                     patnerFound = true;
+                    _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-partner-name input"))).Clear();
                     break;
                 }
             }
@@ -64,12 +58,8 @@ namespace ShopManagment.Pages
         public void PartnerDetails(string PartnerName, int Timeout)
         {
             Logger.Info("Getting Partner Details");
-            _driver.Navigate().GoToUrl("https://kmw-retail-sk.apps.ocp01-shared.t.dc1.cz.ipa.ifortuna.cz/kmw/partner");        
-            Thread.Sleep(Timeout);
-            IWebElement search = _driver.FindElement(By.CssSelector("div#filters-partner-name input"));
-            Thread.Sleep(Timeout);
-            search.SendKeys(PartnerName);
-            Thread.Sleep(Timeout);
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-partner-name input"))).SendKeys(PartnerName);
+            Thread.Sleep(Timeout*2);
 
             IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));
             IList<IWebElement> tableRow = table.FindElements(By.TagName("tr"));
@@ -89,10 +79,12 @@ namespace ShopManagment.Pages
                         if (DisabledPartner == "-")
                         {
                             Logger.Info($"Partner: {Name} with ID: {ID} created on: {Date} is enabled");
+                            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-partner-name input"))).Clear();
                         }
                         else
                         {
                             Logger.Info($"Partner: {Name} with ID: {ID} was created on: {Date} is DISABLED");
+                            _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-partner-name input"))).Clear();
                         }
                     }
                 }
