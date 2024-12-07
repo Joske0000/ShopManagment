@@ -11,6 +11,7 @@ namespace ShopManagment.Pages
         private readonly IWebDriver _driver;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly WebDriverWait _wait;
+        string tableselector = "overflow-auto";
 
         public Shops(IWebDriver driver)
         {
@@ -33,14 +34,14 @@ namespace ShopManagment.Pages
             Thread.Sleep(Timeout);
             _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#shop-modal-form-partner-container label > span"))).Click();
             _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("button#shop-modal-buttons-save"))).Click();
-            WaitForTableToLoad(_driver, "overflow-auto", TimeSpan.FromMilliseconds(Timeout));
+            WaitForTableToLoad(_driver, tableselector, TimeSpan.FromMilliseconds(Timeout));
         }
 
         public void SearchShop(string ShopName, int Timeout)
         {
             Logger.Info("Searching for Shop");          
             _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-shop-name input"))).SendKeys(ShopName);
-            WaitForTableToLoad(_driver, "overflow-auto", TimeSpan.FromMilliseconds(Timeout));
+            WaitForTableToLoad(_driver, tableselector, TimeSpan.FromMilliseconds(Timeout));
             IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));
             IList<IWebElement> tableRow = table.FindElements(By.TagName("tr"));
 
@@ -65,7 +66,7 @@ namespace ShopManagment.Pages
         {
             Logger.Info("Getting Shop Details");
             _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-shop-name input"))).SendKeys(ShopName);
-            WaitForTableToLoad(_driver, "overflow-auto", TimeSpan.FromMilliseconds(Timeout));
+            WaitForTableToLoad(_driver, tableselector, TimeSpan.FromMilliseconds(Timeout));
 
             IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));
             IList<IWebElement> tableRow = table.FindElements(By.TagName("tr"));

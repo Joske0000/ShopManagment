@@ -11,6 +11,7 @@ namespace ShopManagment.Pages
         private readonly IWebDriver _driver;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly WebDriverWait _wait;
+        string tableselector = "overflow-auto";
 
         public Terminals(IWebDriver driver)
         {
@@ -63,7 +64,7 @@ namespace ShopManagment.Pages
             Logger.Info("Getting Terminal Details");
             _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-terminal-name input"))).Clear();
             _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-terminal-name input"))).SendKeys(TerminalName);
-            WaitForTableToLoad(_driver, "overflow-auto", TimeSpan.FromMilliseconds(Timeout));
+            WaitForTableToLoad(_driver, tableselector, TimeSpan.FromMilliseconds(Timeout));
             IWebElement table = _wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("overflow-auto"))); 
             IList<IWebElement> tableRow = table.FindElements(By.TagName("tr"));
             foreach (var row in tableRow)
@@ -100,7 +101,7 @@ namespace ShopManagment.Pages
             _wait.Until(ExpectedConditions.ElementToBeClickable(By.Id("filters-terminal-shop-input-search"))).SendKeys(ShopName);
             Thread.Sleep(Timeout);
             _wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("//*[@id=\"filters-terminal-shop-container\"]/div[2]/div/div[2]/label/span"))).Click();
-            WaitForTableToLoad(_driver, "overflow-auto", TimeSpan.FromMilliseconds(Timeout));
+            WaitForTableToLoad(_driver, tableselector, TimeSpan.FromMilliseconds(Timeout));
 
             IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));
             IList<IWebElement> tableRow = table.FindElements(By.TagName("tr"));

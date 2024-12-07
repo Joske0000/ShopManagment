@@ -10,16 +10,13 @@ namespace ShopManagment
     public class Tests : SetupDriver
     {     
         private List<DataShopManagment> _data;     
-       
         
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             _data = DataShopManagmentRepository.data;
             Setup("chrome");              
-        
         }
-
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
@@ -86,7 +83,7 @@ namespace ShopManagment
                 Assert.Fail("No data from repository");
             }
         }
-
+        
         [Test]
         public void Add_New_Terminal()
         {
@@ -122,6 +119,12 @@ namespace ShopManagment
             string EnrollCode = clipboard.GetText();
 
             Logger.Info($"Enroll Code: {EnrollCode}");  
-        }      
+        }   
+        [Test]
+        public void Network_Disconnection()
+        {
+            SetupDriver setupDriver = new SetupDriver();
+            
+        }
     }
 }

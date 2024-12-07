@@ -12,6 +12,7 @@ namespace ShopManagment.Pages
         private readonly IWebDriver _driver;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly WebDriverWait _wait;
+        public string tableselector = "overflow-auto";
 
         public Partners(IWebDriver driver)
         {
@@ -27,14 +28,14 @@ namespace ShopManagment.Pages
             _wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"partner-modal-form-name\"]/div/div/div/div/input"))).SendKeys(PartnerName);
             _wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"partner-modal-buttons-save\"]"))).Click();      
             Logger.Info($"Partner Added: {PartnerName}");
-            WaitForTableToLoad(_driver, "overflow-auto", TimeSpan.FromMilliseconds(Timeout));
+            WaitForTableToLoad(_driver, tableselector , TimeSpan.FromMilliseconds(Timeout));
         }
 
         public void SearchPartner(string PartnerName, int Timeout)
         {
             Logger.Info("Searching for Partner");
             _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-partner-name input"))).SendKeys(PartnerName);
-            WaitForTableToLoad(_driver, "overflow-auto", TimeSpan.FromMilliseconds(Timeout));         
+            WaitForTableToLoad(_driver, tableselector, TimeSpan.FromMilliseconds(Timeout));         
             IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));
             IList<IWebElement> tableRow = table.FindElements(By.TagName("tr"));
 
@@ -60,7 +61,7 @@ namespace ShopManagment.Pages
             Logger.Info("Getting Partner Details");
             _wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("div#filters-partner-name input"))).SendKeys(PartnerName);
             
-            WaitForTableToLoad(_driver, "overflow-auto", TimeSpan.FromMilliseconds(Timeout));
+            WaitForTableToLoad(_driver, tableselector, TimeSpan.FromMilliseconds(Timeout));
 
             IWebElement table = _driver.FindElement(By.ClassName("overflow-auto"));
             IList<IWebElement> tableRow = table.FindElements(By.TagName("tr"));
